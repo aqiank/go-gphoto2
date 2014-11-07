@@ -5,26 +5,37 @@ import (
 )
 
 func TestGphoto2t (t *testing.T) {
-	ctx := NewContext()
-	cam, err := NewCamera()
+	context := NewContext()
+	
+	camera, err := NewCamera()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = cam.Init(ctx)
+	err = camera.Init(context)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = cam.Capture2(CAPTURE_IMAGE, "image.jpg", ".", ctx)
+	path, err := camera.Capture(CAPTURE_IMAGE, context)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = cam.Free()
+	file, err := camera.File(path.Folder, path.Name, FILE_TYPE_NORMAL, context)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ctx.Free()
+	err = file.Save("image.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = camera.Free()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	context.Free()
 }
